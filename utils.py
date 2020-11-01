@@ -27,7 +27,7 @@ def get_next_months(N):
 
 def get_month_pairs(N):
     month_pairs = []
-    months = get_next_months(5)
+    months = get_next_months(N)
     for start, end in zip(months[:-1], months[1:]):
         month_pairs.append((start, end))
 

@@ -5,10 +5,12 @@ import json
 import logging
 import asyncio
 import aiohttp
+import uvloop
 
 from url_parser import url_parser
 from scheduler import Scheduler
 from aiven_kafka import get_kafka_producer
+import settings
 
 
 async def fetch(session, url):
@@ -39,7 +41,7 @@ async def checker(kafka_producer, session, url, url_dict):
                 result['text'] = m.group()
 
     message = json.dumps(result)
-    await kafka_producer.send_and_wait('topic1', message.encode('utf-8'))
+    await kafka_producer.send_and_wait(settings.KAFKA_TOPIC, message.encode('utf-8'))
 
 
 async def main():
@@ -58,5 +60,5 @@ async def main():
 if __name__ == '__main__':
 
     logging.basicConfig(level=logging.DEBUG)
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    uvloop.install()
+    asyncio.run(main())

@@ -6,8 +6,6 @@ import asyncpg
 from utils import get_month_pairs
 import settings
 
-N = 5
-
 
 async def get_tables(conn):
     query = """
@@ -35,7 +33,9 @@ async def create_ptable(conn, start, end):
     await conn.execute(sql)
 
 async def create_ptables(conn, tables=None):
-    for start, end in get_month_pairs(N):
+    if tables is None:
+        tables = await get_tables(conn)
+    for start, end in get_month_pairs(settings.WARM_UP_PARTITIONS):
         ptable_name = get_ptable_name(start)
         if ptable_name not in tables:
             await create_ptable(conn, start, end)
@@ -47,12 +47,13 @@ async def create_tables(conn):
         await create_table(conn)
     await create_ptables(conn, tables)
 
-async def save(conn, data):
+async def save(conn_pool, data):
     sql_template = "INSERT INTO {table} (url, error, status_code, response_time, text) VALUES($1, $2, $3, $4, $5)"
     sql = sql_template.format(table=settings.DATABASE_TABLE)
-    await conn.execute(sql,
-        data['url'],
-        data.get('error'),
-        data.get('status_code'),
-        data.get('response_time'),
-        data.get('text'))
+    async with conn_pool.acquire() as conn:
+        await conn.execute(sql,
+            data['url'],
+            data.get('error'),
+            data.get('status_code'),
+            data.get('response_time'),
+            data.get('text'))

@@ -7,9 +7,9 @@ import settings
 async def get_kafka_producer():
 
     context = create_ssl_context(
-        cafile='./ca.pem',
-        certfile='./service.cert',
-        keyfile='./service.key'
+        cafile=settings.KAFKA_CAFILE,
+        certfile=settings.KAFKA_CERTFILE,
+        keyfile=settings.KAFKA_KEYFILE
     )
 
     producer = AIOKafkaProducer(
@@ -24,13 +24,13 @@ async def get_kafka_producer():
 async def get_kafka_consumer():
 
     context = create_ssl_context(
-        cafile='./ca.pem',
-        certfile='./service.cert',
-        keyfile='./service.key'
+        cafile=settings.KAFKA_CAFILE,
+        certfile=settings.KAFKA_CERTFILE,
+        keyfile=settings.KAFKA_KEYFILE
     )
 
     consumer = AIOKafkaConsumer(
-        'topic1',
+        settings.KAFKA_TOPIC,
         bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
         security_protocol="SSL",
         client_id="demo-client-1",
