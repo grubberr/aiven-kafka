@@ -2,6 +2,7 @@
 
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from aiokafka.helpers import create_ssl_context
+import settings
 
 async def get_kafka_producer():
 
@@ -12,7 +13,7 @@ async def get_kafka_producer():
     )
 
     producer = AIOKafkaProducer(
-        bootstrap_servers='kafka-aiven-test-grubberr-d0ad.aivencloud.com:19606',
+        bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
         security_protocol="SSL",
         ssl_context=context)
 
@@ -30,7 +31,7 @@ async def get_kafka_consumer():
 
     consumer = AIOKafkaConsumer(
         'topic1',
-        bootstrap_servers='kafka-aiven-test-grubberr-d0ad.aivencloud.com:19606',
+        bootstrap_servers=settings.KAFKA_BOOTSTRAP_SERVERS,
         security_protocol="SSL",
         client_id="demo-client-1",
         group_id="demo-group",

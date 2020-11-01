@@ -4,8 +4,8 @@ import asyncio
 import asyncpg
 
 from utils import get_month_pairs
+import settings
 
-TABLE = 'checks'
 N = 5
 
 
@@ -23,13 +23,13 @@ async def create_table(conn):
         return await conn.execute(schema)
 
 def get_ptable_name(date):
-    return TABLE + '_' + date.strftime('y%Ym%m')
+    return settings.DATABASE_TABLE + '_' + date.strftime('y%Ym%m')
 
 async def create_ptable(conn, start, end):
     sql_template = "CREATE TABLE {ptable} PARTITION OF {table} FOR VALUES FROM ('{start}') TO ('{end}')"
     sql = sql_template.format(
         ptable=get_ptable_name(start),
-        table=TABLE,
+        table=settings.DATABASE_TABLE,
         start=start.strftime('%Y-%m-%d'),
         end=end.strftime('%Y-%m-%d'))
     await conn.execute(sql)
@@ -43,13 +43,13 @@ async def create_ptables(conn, tables=None):
 async def create_tables(conn):
 
     tables = await get_tables(conn)
-    if TABLE not in tables:
+    if settings.DATABASE_TABLE not in tables:
         await create_table(conn)
     await create_ptables(conn, tables)
 
 async def save(conn, data):
     sql_template = "INSERT INTO {table} (url, error, status_code, response_time, text) VALUES($1, $2, $3, $4, $5)"
-    sql = sql_template.format(table=TABLE)
+    sql = sql_template.format(table=settings.DATABASE_TABLE)
     await conn.execute(sql,
         data['url'],
         data.get('error'),

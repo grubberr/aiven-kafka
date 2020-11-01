@@ -7,6 +7,7 @@ import asyncpg
 
 from aiven_kafka import get_kafka_consumer
 from database import create_tables, save
+import settings
 
 
 def get_data(value):
@@ -23,7 +24,7 @@ async def main():
 
     consumer = await get_kafka_consumer()
 
-    conn = await asyncpg.connect(dsn='postgres://localhost/aiven')
+    conn = await asyncpg.connect(dsn=settings.DATABASE_URL)
     await create_tables(conn)
 
     async for msg in consumer:
