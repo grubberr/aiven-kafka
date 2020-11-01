@@ -1,0 +1,22 @@
+- http://python.org
+- https://www.google.com
+- https://twitter.com
+- https://ibmm.com
+- https://1.1.1.1
+- http://google.comm
+
+- url: https://www.facebook.com
+  delay: 10
+
+- url: https://aiven.io
+  regex: data\s+pipelines
+
+- url: https://www.integromat.com
+  delay: "20"
+
+- url: https://www.integromat.com
+  delay: 60
+  regex: Integromat
+
+- url: https://ibm.com
+  regex: "\\"

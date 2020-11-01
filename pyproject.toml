@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "aiven-kafka"
+version = "0.1.0"
+description = "aiven-kafka"
+authors = ["Serhii Chvaliuk <grubberr@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiohttp = "^3.7.2"
+PyYAML = "^5.3.1"
+jsonschema = "^3.2.0"
+aiokafka = "^0.7.0"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.6.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
