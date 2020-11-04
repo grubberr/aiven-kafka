@@ -14,3 +14,28 @@ python3 -m venv env
 pip3 install poetry
 poetry install
 ```
+
+## Running producer
+
+```bash
+cd aiven-kafka
+. env/bin/activate
+python3 producer.py
+```
+
+## Running consumer
+
+```bash
+cd aiven-kafka
+. env/bin/activate
+python3 consumer.py
+```
+
+## Running the tests
+
+```bash
+cd aiven-kafka
+. env/bin/activate
+
+pytest
+```

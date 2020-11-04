@@ -17,7 +17,6 @@ async def get_kafka_producer():
         security_protocol="SSL",
         ssl_context=context)
 
-    await producer.start()
     return producer
 
 
@@ -37,5 +36,4 @@ async def get_kafka_consumer():
         group_id="demo-group",
         ssl_context=context)
 
-    await consumer.start()
     return consumer

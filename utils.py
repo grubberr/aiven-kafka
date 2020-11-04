@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 
+import os
+import logging
 import datetime
 from calendar import timegm
+
+logger = logging.getLogger(os.path.basename(__file__))
+
 
 def get_next_months(N):
     " get next N+1 months starting from current month in GMT "
@@ -25,6 +30,7 @@ def get_next_months(N):
 
     return months
 
+
 def get_month_pairs(N):
     month_pairs = []
     months = get_next_months(N)
@@ -32,3 +38,11 @@ def get_month_pairs(N):
         month_pairs.append((start, end))
 
     return month_pairs
+
+
+async def forever(f):
+    while True:
+        try:
+            await f()
+        except Exception as e:
+            logger.exception(e)

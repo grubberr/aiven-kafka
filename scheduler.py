@@ -42,7 +42,7 @@ class Scheduler:
             await self.queue.put(entry)
 
     async def remove(self, url):
-        " remove url to scheduler "
+        " remove url from scheduler "
         raise NotImplementedError
 
     async def gen(self):

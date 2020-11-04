@@ -7,6 +7,7 @@ import asyncio
 import aiohttp
 import uvloop
 
+from utils import forever
 from url_parser import url_parser
 from scheduler import Scheduler
 from aiven_kafka import get_kafka_producer
@@ -44,17 +45,20 @@ async def checker(kafka_producer, session, url, url_dict):
     await kafka_producer.send_and_wait(settings.KAFKA_TOPIC, message.encode('utf-8'))
 
 
-async def main():
-
-    kafka_producer = await get_kafka_producer()
+async def producer():
 
     scheduler = Scheduler()
-    for url_item in url_parser('urls.yaml'):
+    for url_item in url_parser(settings.URLS_FILE):
         await scheduler.add(**url_item)
 
-    async with aiohttp.ClientSession() as session:
+    kafka_producer = await get_kafka_producer()
+    async with kafka_producer, aiohttp.ClientSession() as session:
         async for url, url_dict in scheduler.gen():
             asyncio.create_task(checker(kafka_producer, session, url, url_dict))
+
+
+async def main():
+    await forever(producer)
 
 
 if __name__ == '__main__':

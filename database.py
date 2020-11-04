@@ -1,10 +1,21 @@
 #!/usr/bin/env python3
 
-import asyncio
+from urllib.parse import urlsplit
 import asyncpg
-
 from utils import get_month_pairs
 import settings
+
+
+TABLE_SCHEMA = """
+CREATE TABLE {} (
+    url character varying(1024) NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    error character varying(1024),
+    status_code integer,
+    response_time double precision,
+    text character varying(1024)
+) PARTITION BY RANGE (created_at);
+""".format(settings.DATABASE_TABLE)
 
 
 async def get_tables(conn):
@@ -16,9 +27,7 @@ async def get_tables(conn):
     return [r['tablename'] for r in result]
 
 async def create_table(conn):
-    with open('schema.sql') as fp:
-        schema = fp.read()
-        return await conn.execute(schema)
+    return await conn.execute(TABLE_SCHEMA)
 
 def get_ptable_name(date):
     return settings.DATABASE_TABLE + '_' + date.strftime('y%Ym%m')
@@ -47,13 +56,39 @@ async def create_tables(conn):
         await create_table(conn)
     await create_ptables(conn, tables)
 
-async def save(conn_pool, data):
+async def save(conn_pool, batch):
     sql_template = "INSERT INTO {table} (url, error, status_code, response_time, text) VALUES($1, $2, $3, $4, $5)"
     sql = sql_template.format(table=settings.DATABASE_TABLE)
     async with conn_pool.acquire() as conn:
-        await conn.execute(sql,
+        params = [(
             data['url'],
             data.get('error'),
             data.get('status_code'),
             data.get('response_time'),
-            data.get('text'))
+            data.get('text')) for data in batch]
+        await conn.executemany(sql, params)
+
+async def drop_database(url):
+    res = urlsplit(url)
+    database = res.path.lstrip('/')
+    res = res._replace(path='/' + 'postgres')
+    url = res.geturl()
+    conn = await asyncpg.connect(dsn=url)
+    await conn.execute('DROP DATABASE "{}"'.format(database))
+
+async def create_database(url):
+    res = urlsplit(url)
+    database = res.path.lstrip('/')
+    res = res._replace(path='/' + 'postgres')
+    url = res.geturl()
+    conn = await asyncpg.connect(dsn=url)
+    await conn.execute('CREATE DATABASE "{}"'.format(database))
+
+async def database_exists(url):
+    res = urlsplit(url)
+    database = res.path.lstrip('/')
+    res = res._replace(path='/' + 'postgres')
+    url = res.geturl()
+    conn = await asyncpg.connect(dsn=url)
+    row = await conn.fetchrow('SELECT 1 FROM pg_database WHERE datname = $1', database)
+    return bool(row)
