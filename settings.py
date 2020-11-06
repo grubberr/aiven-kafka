@@ -1,10 +1,16 @@
 
-URLS_FILE='urls.yaml'
-DATABASE_URL='postgres://avnadmin:ojub1lj74e6a3tb7@pg-aiven-test-grubberr-d0ad.aivencloud.com:19604/defaultdb?sslmode=require'
-DATABASE_TABLE = 'checks'
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent
+URLS_FILE = os.getenv('URLS_FILE', 'urls.yaml')
+DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_TABLE = os.getenv('DATABASE_TABLE', 'checks')
 WARM_UP_PARTITIONS = 3
-KAFKA_BOOTSTRAP_SERVERS='kafka-aiven-test-grubberr-d0ad.aivencloud.com:19606'
-KAFKA_TOPIC='topic1'
-KAFKA_CAFILE='./ca.pem'
-KAFKA_CERTFILE='./service.cert'
-KAFKA_KEYFILE='./service.key'
+KAFKA_BOOTSTRAP_SERVERS = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
+KAFKA_TOPIC = os.getenv('KAFKA_TOPIC', 'topic1')
+KAFKA_CAFILE = os.getenv('KAFKA_CAFILE', 'ca.pem')
+KAFKA_CERTFILE = os.getenv('KAFKA_CERTFILE', 'service.cert')
+KAFKA_KEYFILE = os.getenv('KAFKA_KEYFILE', 'service.key')
