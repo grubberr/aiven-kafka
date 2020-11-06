@@ -36,6 +36,25 @@ For PostgreSQL database you need to create database only (no any schemas)
 
 ## Running producer
 
+Producer instance (daemon) fetch urls from `urls.yaml` file. It's yaml file which allows to define urls for checking.
+You can defined just list of urls.
+
+```yaml
+- url1
+- url2
+```
+
+For some urls for which you want to have more control
+you can to define additinal settings:
+
+```yaml
+- url: url1
+  delay: 120
+  regex: find\s+me
+```
+1. delay - delay number of second betaween checks
+2. regex - it will try to search all ocurences of specified pattern on page.
+
 ```bash
 cd aiven-kafka
 . env/bin/activate
@@ -43,6 +62,8 @@ python3 producer.py
 ```
 
 ## Running consumer
+
+Consumer instance (daemon) receive check results from Kafka and store them in PostgreSQL.
 
 ```bash
 cd aiven-kafka

@@ -12,7 +12,7 @@ logger = logging.getLogger(os.path.basename(__file__))
 
 class Scheduler:
 
-    DEFAULT_DELAY = 5
+    DEFAULT_DELAY = 60
 
     def __init__(self):
         self.urls = defaultdict(dict)
