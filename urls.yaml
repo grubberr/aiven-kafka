@@ -6,17 +6,11 @@
 - http://google.comm
 
 - url: https://www.facebook.com
-  delay: 10
+  delay: 30
 
 - url: https://aiven.io
   regex: data\s+pipelines
 
-- url: https://www.integromat.com
-  delay: "20"
-
-- url: https://www.integromat.com
-  delay: 60
-  regex: Integromat
-
-- url: https://ibm.com
-  regex: "\\"
+- url: https://en.wikipedia.org/wiki/United_States_presidential_election
+  delay: 10
+  regex: United\s+States
