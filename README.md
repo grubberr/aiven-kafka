@@ -48,11 +48,11 @@ For some urls for which you want to have more control
 you can to define additinal settings:
 
 ```yaml
-- url: url1
+- url: url3
   delay: 120
   regex: find\s+me
 ```
-1. delay - delay number of second betaween checks
+1. delay - delay number of seconds between checks.
 2. regex - it will try to search all ocurences of specified pattern on page.
 
 ```bash
